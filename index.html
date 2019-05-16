@@ -17,6 +17,7 @@
         <h1>Todos</h1>
         <form id="addForm">
             <input id="item" type="text" class="input" placeholder="Write new todo">
+            <label class="fas fa-question-circle fa-2x" for="modal-1"></label>
         </form>
         <ul></ul>
         <div class="bottomGrid">
@@ -24,13 +25,36 @@
                 <span id="todoCount">0</span> active items
             </div>
             <div>
-                <button id="allFilter" class="active">All</button>
-                <button id="activeFilter">Active</button>
-                <button id="doneFilter">Completed</button>
+                <a href="#all"><button id="allFilter" class="active">All</button></a>
+                <a href="#active"><button id="activeFilter">Active</button></a>
+                <a href="#done"><button id="doneFilter">Completed</button></a>
             </div>
             <div>
                 <button id="clear">Clear All</button>
             </div>
+        </div>
+    </div>
+
+    <!-- HIDDEN -->
+    <input class="hidden" id="modal-1" type="checkbox" />
+
+    <!-- MODAL -->
+    <div class="modal">
+        <label class="modal_bg" for="modal-1"></label>
+        <div class="modal_inner">
+            <label class="modal_close" for="modal-1"></label>
+            <h2>Info</h2>
+            <ul>
+                <li>Double-click to edit a todo</li>
+                <li>Drag & Drop if you want reorder the todolist (Coming soon)</li>
+            </ul>
+            <h2>Settings</h2>
+            <ul>
+                <li class="settingsGrid">
+                    <input class="pile" type="checkbox"><span>What that pile of pappers effect?</span>
+                </li>
+            </ul>
+            <p class="credits">Made by: Fatlum Ibishi & Nicklas Damgren</p>
         </div>
     </div>
 

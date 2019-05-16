@@ -7,17 +7,22 @@ const bottomSection = document.getElementsByClassName('bottomGrid')[0];
 const allFilter = document.getElementById('allFilter');
 const doneFilter = document.getElementById('doneFilter');
 const activeFilter = document.getElementById('activeFilter');
+const mainDiv = document.getElementsByClassName('small-container')[0];
+const pile = document.getElementsByClassName('pile')[0];
 let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
 
 const updateCount = () => {
-    let count = 0;
+    let countDone = 0;
+    let countAll = 0;
     itemsArray.forEach(todo => {
         if (!todo.done)
-            ++count;
+            ++countDone;
+        if (todo)
+            ++countAll;
     })
-    todoCount.textContent = count;
+    todoCount.textContent = countDone;
 
-    if (count === 0)
+    if (countAll === 0)
         bottomSection.classList.add("hidden");
     else
         bottomSection.classList.remove("hidden");
@@ -133,6 +138,24 @@ activeFilter.addEventListener('click', () => {
     activeFilter.className = "active";
 })
 
+function locationHashChanged() {
+    if (location.hash === '#all') {
+        ul.className = "";
+        allFilter.className = "active";
+        doneFilter.className = "";
+        activeFilter.className = "";
+    } else if (location.hash === '#done') {
+        ul.className = "doneFilter";
+        allFilter.className = "";
+        doneFilter.className = "active";
+        activeFilter.className = "";
+    } else if (location.hash === '#active') {
+        ul.className = "activeFilter";
+        allFilter.className = "";
+        doneFilter.className = "";
+        activeFilter.className = "active";
+    }
+}
 
 form.addEventListener('submit', e => {
     e.preventDefault();
@@ -159,6 +182,15 @@ button.addEventListener('click', () => {
     ul.innerHTML = "";
     updateCount();
 })
+
+pile.addEventListener('click', () => {
+    if (mainDiv.classList.contains("pappershog"))
+        mainDiv.classList.remove("pappershog");
+    else
+        mainDiv.classList.add("pappershog");
+})
+
+window.onhashchange = locationHashChanged();
 
 removeEmpty();
 updateCount();
