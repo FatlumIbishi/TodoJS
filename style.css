@@ -62,8 +62,9 @@ li {
 }
 
 .input {
-    width: 30em;
+    max-width: 30em;
     height: 2em;
+    width: -webkit-fill-available;
 }
 
 .input, button {
@@ -87,7 +88,7 @@ button.active {
 button {
     margin-bottom: 2em;
     font-size: .8em;
-    padding: .5em 1em;
+    padding: .7em 1.4em .5em;
     cursor: pointer;
 }
 
