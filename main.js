@@ -11,6 +11,15 @@ const mainDiv = document.getElementsByClassName('small-container')[0];
 const pile = document.getElementsByClassName('pile')[0];
 let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
 
+new Sortable(ul, {
+	animation: 150,
+    ghostClass: 'dragging',
+    chosenClass: 'dragging',
+    onUpdate: function () {
+        // Gör en save function på ny sorterad list.
+	},
+});
+
 const updateCount = () => {
     let countDone = 0;
     let countAll = 0;

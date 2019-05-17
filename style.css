@@ -310,3 +310,7 @@ li input:checked ~ span {
     bottom: 0px;
     text-align: center;
 }
+
+.dragging {
+    background-color: rgba(150, 150, 150, 0.1);
+}
