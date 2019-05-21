@@ -163,20 +163,6 @@ li input:checked ~ span {
     grid-template-columns: auto 1fr 2em;
 }
 
-.settingsGrid {
-    display: grid;
-    grid-template-columns: auto 1fr;
-}
-
-.settingsGrid input ~ span {
-    opacity: .5;
-}
-
-.settingsGrid input:checked ~ span {
-    opacity: 1;
-    text-decoration: unset;
-}
-
 .todoGrid i {
     margin: 0 auto;
     padding-top: .4em;
@@ -191,25 +177,25 @@ li input:checked ~ span {
 .bottomGrid {
     margin: 2em 0 1em;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr auto 1fr;
 }
 
 .hidden {
     display: none;
 }
 
-.doneFilter li, .activeFilter li.todoDone {
+.completedFilter li, .activeFilter li.todoCompleted {
     display: none;
 }
 
-.doneFilter li.todoDone, .activeFilter li {
+.completedFilter li.todoCompleted, .activeFilter li {
     display: grid;
 }
 
 #addForm label {
     position: relative;
     top: 7px;
-    left: 20px;
+    padding: 0 20px;
     opacity: .5;
     cursor: pointer;
 }
@@ -309,8 +295,4 @@ li input:checked ~ span {
     position: absolute;
     bottom: 0px;
     text-align: center;
-}
-
-.dragging {
-    background-color: rgba(150, 150, 150, 0.1);
 }

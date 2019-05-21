@@ -1,178 +1,179 @@
 const form = document.getElementById('addForm');
 const ul = document.querySelector('ul');
-const button = document.getElementById('clear');
+const clearButton = document.getElementById('clear');
 const input = document.getElementById('item');
 const todoCount = document.getElementById('todoCount');
-const bottomSection = document.getElementsByClassName('bottomGrid')[0];
+const bottomSection = document.getElementById('bottom');
 const allFilter = document.getElementById('allFilter');
-const doneFilter = document.getElementById('doneFilter');
 const activeFilter = document.getElementById('activeFilter');
-const mainDiv = document.getElementsByClassName('small-container')[0];
-const pile = document.getElementsByClassName('pile')[0];
+const completedFilter = document.getElementById('completedFilter');
+const mainDiv = document.getElementById('main');
+const checkAll = document.getElementById('checkall');
+
 let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
+let countCompleted = 0;
+let countAll = 0;
+const countActive = () => countAll - countCompleted;
+const countVisible = () => location.hash === "#active" ? countActive() : location.hash === "#completed" ? countCompleted : countAll;
 
-new Sortable(ul, {
-	animation: 150,
-    ghostClass: 'dragging',
-    chosenClass: 'dragging',
-    onUpdate: function () {
-        // Gör en save function på ny sorterad list.
-	},
-});
-
-const updateCount = () => {
-    let countDone = 0;
-    let countAll = 0;
+function countItems() {
+    let cc = 0;
+    let ca = 0;
     itemsArray.forEach(todo => {
-        if (!todo.done)
-            ++countDone;
+        if (todo.completed)
+            ++cc;
         if (todo)
-            ++countAll;
-    })
-    todoCount.textContent = countDone;
-
-    if (countAll === 0)
-        bottomSection.classList.add("hidden");
-    else
-        bottomSection.classList.remove("hidden");
+            ++ca;
+    });
+    countCompleted = cc;
+    countAll = ca;
 }
 
-const removeEmpty = () => itemsArray = itemsArray.filter(item => item.text !== "");
+function updateActiveText() {
+    countItems();
+    todoCount.textContent = countActive();
+}
 
-const save = () => {
-    removeEmpty();
+function updateVisibility() {
+    bottomSection.classList.toggle("hidden", countAll === 0);
+    mainDiv.classList.toggle("pappershog", countVisible() !== 0);
+    clearButton.hidden = countCompleted === 0;
+    setCheckAllBtn(countCompleted === countAll);
+    checkAll.classList.toggle("hidden", countAll === 0);
+}
+
+const nonEmptyItems = () => itemsArray.filter(item => item.text !== "");
+const activeItems = () => itemsArray.filter(item => !item.completed);
+
+function saveToStorage() {
+    itemsArray = nonEmptyItems();
     localStorage.setItem('items', JSON.stringify(itemsArray));
-    updateCount();
 }
 
-const liMaker = (text, index, done) => {
-    //if (text != "") {
-        const li = document.createElement('li');
-        const checkbox = document.createElement('input');
-        const edit = document.createElement('input');
-        const span = document.createElement('span');
-        const times = document.createElement('i');
-        li.id = "todo" + index;
-        li.className = "todoGrid";
-        if (done)
-            li.classList.add("todoDone");
-        checkbox.className = "todoCheckbox";
-        checkbox.checked = done;
-        span.textContent = text;
-        edit.value = text;
-        edit.className = "edit";
-        edit.hidden = true;
-        span.hidden = false;
-        checkbox.type = "checkbox";
-        times.className = "fas fa-times";
-        li.appendChild(checkbox);
-        li.appendChild(span);
-        li.appendChild(edit);
-        li.appendChild(times);
-        ul.appendChild(li);
+function saveAndUpdate() {
+    saveToStorage();
+    updateActiveText();
+    updateVisibility();
+}
 
-        span.addEventListener('dblclick', () => {
-            span.hidden = true;
-            edit.hidden = false;
-            edit.focus();
-        });
-        
-        const removeItem = () => {
-            itemsArray.splice(index, 1);
-            save();
-            createList();
-        };
+function liMaker(text, index, completed) {
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    const edit = document.createElement('input');
+    const span = document.createElement('span');
+    const times = document.createElement('i');
+    li.id = "todo" + index;
+    li.className = "todoGrid";
+    if (completed)
+        li.classList.add("todoCompleted");
+    checkbox.className = "todoCheckbox";
+    checkbox.checked = completed;
+    span.textContent = text;
+    edit.value = text;
+    edit.className = "edit";
+    edit.hidden = true;
+    span.hidden = false;
+    checkbox.type = "checkbox";
+    times.className = "fas fa-times";
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(edit);
+    li.appendChild(times);
+    ul.appendChild(li);
 
-        const editDone = () => {
-            if (edit.value === "")
-                removeItem();
-            else {
-                itemsArray[index].text = edit.value;
-                save();
-                span.textContent = edit.value;
-                span.hidden = false;
-                edit.hidden = true;
-            }
+    span.addEventListener('dblclick', () => {
+        span.hidden = true;
+        edit.hidden = false;
+        edit.focus();
+    });
+    
+    const removeItem = () => {
+        itemsArray.splice(index, 1);
+        saveAndUpdate();
+        createList();
+    };
+
+    const editCompleted = () => {
+        if (edit.value === "")
+            removeItem();
+        else {
+            itemsArray[index].text = edit.value;
+            saveToStorage();
+            span.textContent = edit.value;
+            span.hidden = false;
+            edit.hidden = true;
         }
+    }
 
-        edit.addEventListener('focusout', editDone);
-        edit.addEventListener('keyup', e => {
-            if (e.key === "Enter")
-                editDone();
-            else if (e.key === "Escape") {
-                edit.value = span.textContent;
-                editDone();
-            }
-        });
+    edit.addEventListener('focusout', editCompleted);
+    edit.addEventListener('keyup', e => {
+        if (e.key === "Enter")
+            editCompleted();
+        else if (e.key === "Escape") {
+            // undo the entered text
+            edit.value = span.textContent;
+            editCompleted();
+        }
+    });
 
-        times.addEventListener('click', removeItem);
+    times.addEventListener('click', removeItem);
 
-        checkbox.addEventListener('click', () => {
-            itemsArray[index].done = checkbox.checked;
-            if (checkbox.checked)
-                li.classList.add("todoDone");
-            else
-                li.classList.remove("todoDone");
-            save();
-        });
-    //}
+    checkbox.addEventListener('click', () => {
+        itemsArray[index].completed = checkbox.checked;
+        li.classList.toggle("todoCompleted", checkbox.checked);
+        saveAndUpdate();
+    });
 }
 
-const createList = () => {
+function createList() {
     ul.innerHTML = "";
-    var i = 0;
-    itemsArray.forEach(item => {
-        liMaker(item.text, i++, item.done);
+    itemsArray.forEach((item, i) => {
+        liMaker(item.text, i, item.completed);
     });
 }
 
 allFilter.addEventListener('click', () => {
-    ul.className = "";
-    allFilter.className = "active";
-    doneFilter.className = "";
-    activeFilter.className = "";
-})
-
-doneFilter.addEventListener('click', () => {
-    ul.className = "doneFilter";
-    allFilter.className = "";
-    doneFilter.className = "active";
-    activeFilter.className = "";
+    location.hash = 'all';
 })
 
 activeFilter.addEventListener('click', () => {
-    ul.className = "activeFilter";
-    allFilter.className = "";
-    doneFilter.className = "";
-    activeFilter.className = "active";
+    location.hash = 'active'
 })
+
+completedFilter.addEventListener('click', () => {
+    location.hash = 'completed'
+})
+
+window.onload = locationHashChanged;
+window.onhashchange = locationHashChanged;
 
 function locationHashChanged() {
     if (location.hash === '#all') {
         ul.className = "";
         allFilter.className = "active";
-        doneFilter.className = "";
+        completedFilter.className = "";
         activeFilter.className = "";
-    } else if (location.hash === '#done') {
-        ul.className = "doneFilter";
+    } else if (location.hash === '#completed') {
+        ul.className = "completedFilter";
         allFilter.className = "";
-        doneFilter.className = "active";
+        completedFilter.className = "active";
         activeFilter.className = "";
     } else if (location.hash === '#active') {
         ul.className = "activeFilter";
         allFilter.className = "";
-        doneFilter.className = "";
+        completedFilter.className = "";
         activeFilter.className = "active";
     }
+    updateVisibility();
 }
 
 form.addEventListener('submit', e => {
     e.preventDefault();
     itemsArray.push({
-        done: false,
+        completed: false,
         text: input.value
     });
-    save();
+    saveAndUpdate();
     liMaker(input.value, itemsArray.length - 1, false);
     bradness(input.value);
     input.value = '';
@@ -182,25 +183,36 @@ const bradness = text => {
     if (text.toLowerCase().includes("brad") && text.toLowerCase().includes("pitt")) {
         document.body.style.backgroundImage = "url('https://www.rollingstone.com/wp-content/uploads/2018/06/rs-18735-20140414-bradpitt-x1800-1397509559.jpg?crop=900:600&width=1910')"
         ul.style.opacity = "0.6";
+        Array.from(document.getElementsByClassName("bradfix")).forEach(e => e.style.color = "white");
     }
 }
 
-button.addEventListener('click', () => {
-    localStorage.clear();
-    itemsArray = [];
-    ul.innerHTML = "";
-    updateCount();
+clearButton.addEventListener('click', () => {
+    itemsArray = activeItems();
+    saveAndUpdate();
+    createList();
+    if (location.hash === '#completed')
+        location.hash = 'all';
 })
 
-pile.addEventListener('click', () => {
-    if (mainDiv.classList.contains("pappershog"))
-        mainDiv.classList.remove("pappershog");
-    else
-        mainDiv.classList.add("pappershog");
+function toggleCheckAllBtn() {
+    checkAll.classList.toggle('fa-square');
+    return checkAll.classList.toggle('fa-check-square');
+}
+
+function setCheckAllBtn(bool) {
+    checkAll.classList.toggle('fa-square', !bool);
+    checkAll.classList.toggle('fa-check-square', bool);
+}
+
+checkAll.addEventListener('click', () => {
+    let checked = toggleCheckAllBtn();
+    itemsArray.forEach(item => item.completed = checked);
+    saveAndUpdate();
+    createList();
 })
 
-window.onhashchange = locationHashChanged();
-
-removeEmpty();
-updateCount();
+itemsArray = nonEmptyItems();
+updateActiveText();
+updateVisibility();
 createList();
