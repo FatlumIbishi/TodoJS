@@ -7,7 +7,6 @@
 
     <title>TodoJS</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Catamaran" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 
@@ -16,40 +15,31 @@
 
 <body>
     <div id="main" class="small-container">
-        <h1>Todos</h1>
-        <form id="addForm">
-            <label id="checkall" class="fas fa-square bradfix fa-2x"></label>
-            <input id="item" type="text" class="input" placeholder="Write new todo">
-            <label id="info" class="fas fa-question-circle bradfix fa-2x" for="modal-1"></label>
-        </form>
-        <ul></ul>
-        <div id="bottom" class="bottomGrid">
-            <div id="todoCountText" class="bradfix">
-                <span id="todoCount">0</span> active items
-            </div>
-            <div>
-                <button id="allFilter" class="active">All</button>
-                <button id="activeFilter">Active</button>
-                <button id="completedFilter">Completed</button>
-            </div>
-            <div>
-                <button id="clear" hidden>Clear Completed</button>
+        <h1 class="bradfix">todos</h1>
+        <div class="ruta">
+            <form id="addForm">
+                <label id="checkall" class="fas fa-angle-down fa-2x"></label>
+                <input id="item" type="text" class="input" placeholder="What needs to be done?">
+            </form>
+            <ul></ul>
+            <div id="bottom">
+                <div id="todoCountText">
+                    <p><span id="todoCount">0</span> active items</p>
+                </div>
+                <div>
+                    <button id="allFilter" class="active">All</button>
+                    <button id="activeFilter">Active</button>
+                    <button id="completedFilter">Completed</button>
+                </div>
+                <div>
+                    <button id="clear" hidden>Clear Completed</button>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- MODAL - info rutan till höger om input -->
-    <input class="hidden" id="modal-1" type="checkbox" />
-    <div class="modal">
-        <label class="modal_bg" for="modal-1"></label>
-        <div class="modal_inner">
-            <label class="modal_close" for="modal-1"></label>
-            <h2>Info</h2>
-            <ul>
-                <li>Double-click to edit a todo</li>
-            </ul>
-            <p class="credits">Made by: Fatlum Ibishi & Nicklas Damgren</p>
-        </div>
+    <div class="credits bradfix">
+        <p class="smaller">Double-click to edit a todo</p>
+        <p>Made by: Fatlum Ibishi & Nicklas Damgren</p>
     </div>
 </body>
 

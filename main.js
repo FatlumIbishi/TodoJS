@@ -36,10 +36,9 @@ function updateActiveText() {
 
 function updateVisibility() {
     bottomSection.classList.toggle("hidden", countAll === 0);
-    mainDiv.classList.toggle("pappershog", countVisible() !== 0);
     clearButton.hidden = countCompleted === 0;
     setCheckAllBtn(countCompleted === countAll);
-    checkAll.classList.toggle("hidden", countAll === 0);
+    checkAll.classList.toggle("nonvisible", countAll === 0);
 }
 
 const nonEmptyItems = () => itemsArray.filter(item => item.text !== "");
@@ -148,6 +147,7 @@ window.onload = locationHashChanged;
 window.onhashchange = locationHashChanged;
 
 function locationHashChanged() {
+    console.log(location.hash);
     if (location.hash === '#all') {
         ul.className = "";
         allFilter.className = "active";
@@ -196,13 +196,13 @@ clearButton.addEventListener('click', () => {
 })
 
 function toggleCheckAllBtn() {
-    checkAll.classList.toggle('fa-square');
-    return checkAll.classList.toggle('fa-check-square');
+    checkAll.classList.toggle('fa-angle-down');
+    return checkAll.classList.toggle('fa-angle-up');
 }
 
 function setCheckAllBtn(bool) {
-    checkAll.classList.toggle('fa-square', !bool);
-    checkAll.classList.toggle('fa-check-square', bool);
+    checkAll.classList.toggle('fa-angle-down', !bool);
+    checkAll.classList.toggle('fa-angle-up', bool);
 }
 
 checkAll.addEventListener('click', () => {
