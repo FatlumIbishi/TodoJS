@@ -223,5 +223,5 @@ input[type='checkbox']:checked::before {
 
 #clear:hover {
     text-decoration: underline;
-    border: 0;
+    border: 0 !important;
 }
